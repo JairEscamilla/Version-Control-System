@@ -7,6 +7,7 @@ int main(void){
         {LOAD_USERS, load_users},
         {MENU, menu},
         {CREAR_REPOSITORIO, crear_repositorio},
+        {COMMIT, commit}
         {EXIT, salir}
     };
 
@@ -152,6 +153,57 @@ int logger(){
         }
     }
     fclose(fp);
-
     return 0;
+}
+
+void commit(State *state){
+    *state = MENU;
+    int flag = 0;
+    char repositorio[200], linea[200], descripcion[200];
+    FILE* fp = fopen("app/repositorios.dat", "rt");
+    printf("Ingresar el repositorio al que desea hacer el commit-> ");
+    fgets(repositorio, sizeof(repositorio), stdin);
+    repositorio[strlen(repositorio) - 1] = '\0';
+    while (fgets(linea, 150, fp) != NULL){
+        linea[strlen(linea) - 1 ] = '\0';
+        if(strcmp(repositorio, linea) == 0){
+            flag = 1;
+        }
+    }
+    if(flag == 0){
+        printf("No se ha encontrado este repositorio):\n");
+        return;
+    }
+    printf("Ingresar descripcion del commit-> ");
+    fgets(descripcion, sizeof(descripcion), stdin);
+    descripcion[strlen(descripcion) - 1] = '\0';
+    loggerCommit(descripcion);
+}
+
+int loggerCommit(char *descripcion){
+    int flag = 0;
+    char user[100], pwd[100], renglon[100], renglon2[100];
+    FILE *fp = fopen("app/users.dat", "rt");
+    printf("Ingresa tu usuario-> ");
+    fgets(user, sizeof(user), stdin);
+    user[strlen(user) - 1] = '\0';
+    printf("Ingresa tu password-> ");
+    fgets(pwd, sizeof(pwd), stdin);
+    pwd[strlen(pwd) - 1] = '\0';
+    while (fgets(renglon, 98, fp) != NULL){
+        renglon[strlen(renglon) - 1] = '\0';
+        fgets(renglon2, 100, fp);
+        renglon2[strlen(renglon2) - 1] = '\0';
+        if (strcmp(user, renglon) == 0 && strcmp(pwd, renglon2) == 0){
+            fclose(fp);
+            flag =  1;
+        }
+    }
+    fclose(fp);
+    flag =  0;
+    if(flag == 0){
+        puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
+        return 0;
+    }
+    
 }

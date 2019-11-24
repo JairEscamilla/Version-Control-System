@@ -34,6 +34,8 @@ void load_users(State* state);
 void menu(State* state);
 void salir(State* state);
 void crear_repositorio(State* state);
+void commit(State* state);
 
 int logger();
+int loggerCommit(char* descripcion);
 #endif // !state_machine_h
