@@ -21,7 +21,16 @@ int main(void){
 }
 
 void load_users(State *state){
-    puts("Cargando files");
+    puts("Cargando files... ");
+    FILE* fp = fopen("app/users.dat", "rt");
+    if(fp == NULL){
+        system("mkdir app");
+        fp = fopen("app/users.dat", "wt");
+        fprintf(fp, "%s\n%s\n", "UserPrueba", "12345");
+        fclose(fp);
+    }else 
+        fclose(fp);
+    puts("Los archivos se han cargado con exito!");
     *state = LOAD_USERS;
     system("sleep 2");
 }
