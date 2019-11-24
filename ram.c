@@ -33,7 +33,6 @@ void load_users(State *state){
         fprintf(fp, "%s\n%s\n", "UserPrueba", "12345");
         fclose(fp);
         fp = fopen("app/repositorios.dat", "wt");
-        fprintf(fp, "rp\n");
         fclose(fp);
     }else 
         fclose(fp);
@@ -85,6 +84,7 @@ void menu(State *state){
 }
 
 void crear_repositorio(State *state){
+    *state = MENU;
     FILE* fp;
     int flag = 0;
     char repositorio[200], sentencia[200], renglon[200];
@@ -93,6 +93,12 @@ void crear_repositorio(State *state){
     __fpurge(stdin);
     fgets(repositorio, sizeof(repositorio), stdin);
     repositorio[strlen(repositorio) - 1] = '\0';
+    if(!logger()){
+        puts("No se encuentra registrado en el sistema): ");
+        puts("Presiona enter para continuar... ");
+        getchar();
+        return;
+    }
     fp = fopen("app/repositorios.dat", "rt");
     while (fgets(renglon, 100, fp) != NULL){
         renglon[strlen(renglon) - 1 ] = '\0';
@@ -114,11 +120,33 @@ void crear_repositorio(State *state){
     
     puts("Presiona enter para continuar... ");
     getchar();
-    *state = MENU;
 }   
 
 void salir(State *state){
     puts("HEEEERE");
     system("sleep 5");
     exit(0);
+}
+
+int logger(){
+    char user[100], pwd[100], renglon[100], renglon2[100];
+    FILE* fp = fopen("app/users.dat", "rt");
+    printf("Ingresa tu usuario-> ");
+    fgets(user, sizeof(user), stdin);
+    user[strlen(user) - 1] = '\0';
+    printf("Ingresa tu password-> ");
+    fgets(pwd, sizeof(pwd), stdin);
+    pwd[strlen(pwd) - 1] = '\0';
+    while (fgets(renglon, 98, fp) != NULL){
+        renglon[strlen(renglon) - 1] = '\0';
+        fgets(renglon2, 100, fp);
+        renglon2[strlen(renglon2) - 1] = '\0';
+        if(strcmp(user, renglon) == 0 && strcmp(pwd, renglon2) == 0){
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+
+    return 0;
 }

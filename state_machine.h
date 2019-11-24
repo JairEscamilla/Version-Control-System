@@ -35,4 +35,5 @@ void menu(State* state);
 void salir(State* state);
 void crear_repositorio(State* state);
 
+int logger();
 #endif // !state_machine_h
