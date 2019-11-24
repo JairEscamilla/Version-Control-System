@@ -9,12 +9,14 @@
 // Definimos las etiquetas de los estados de la maquina
 typedef enum stateType{
     LOAD_USERS,
+    MENU,
     CREAR_REPOSITORIO,
     CAMBIAR_DE_RAMA, 
     COMMIT,
     VER_COMMITS,
     MERGE,
     AGREGAR_USUARIOS,
+    VER_REPOSITORIOS,
     EXIT,
     STATE_NUM
 }State;
@@ -29,5 +31,7 @@ typedef struct defEstado{
 
 // Prototipos de las funciones que ejecutara la maquina de estados
 void load_users(State* state);
+void menu(State* state);
+void salir(State* state);
 
 #endif // !state_machine_h
