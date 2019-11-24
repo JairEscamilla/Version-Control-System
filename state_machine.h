@@ -33,5 +33,6 @@ typedef struct defEstado{
 void load_users(State* state);
 void menu(State* state);
 void salir(State* state);
+void crear_repositorio(State* state);
 
 #endif // !state_machine_h
