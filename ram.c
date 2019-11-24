@@ -106,7 +106,6 @@ void crear_repositorio(State *state){
             flag = 1;
     }
     fclose(fp);
-
     if(flag == 1)
         puts("Este repositorio ya existe):\n");
     else{
@@ -114,6 +113,12 @@ void crear_repositorio(State *state){
         strcat(sentencia, repositorio);
         fprintf(fp, "%s\n", repositorio);
         fclose(fp);
+        system(sentencia);
+        strcat(sentencia, "/master");
+        system(sentencia);
+        strcpy(sentencia, "mkdir ");
+        strcat(sentencia, repositorio);
+        strcat(sentencia, "/pruebas");
         system(sentencia);
         puts("Se ha creado con exito el repositorio!\n");
     } 
