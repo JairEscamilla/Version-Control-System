@@ -1,7 +1,16 @@
-#include "state_machine.h"
 
+/*
+ * @author: César Mauricio Arellano Velásquez, Allan Jair Escamilla Hernández, Raúl González Portillo.
+ * @date:   25/Noviembre/2019
+ * @file:   ram.c
+ * @brief:  Implementación de máquinas de estados para el sistema controlador de versiones.
+ */
+
+#include "state_machine.h" // Incluimos el archivo que contiene las funciones para la maquina de estadps
+
+// Funcion principal
 int main(void){
-    State state = LOAD_USERS;
+    State state = LOAD_USERS; // Inicializamos el estado en el que se encontrara la maquina
     // Matriz que contiene las funciones y labels para cada estado
     Estados maquina[] = {
         {LOAD_USERS, load_users},
@@ -14,7 +23,7 @@ int main(void){
     // Bucle infinito para la maquina de estados
     for( ; ;){
         system("clear");
-        if(state > STATE_NUM){
+        if(state > STATE_NUM){ // En caso de caer en un estado invalido, lanzamos una excepcion
             puts("Ha ocurrido un error con los estados):");
             return 0;
         }
@@ -25,6 +34,9 @@ int main(void){
     return 0;
 }
 
+/* * Estado que lee carga los archivos que va a necesitar nuestro sistema.
+   * @param States State Determina el siguiente estado de la máquina.
+*/
 void load_users(State *state){
     puts("Cargando files... ");
     FILE* fp = fopen("app/users.dat", "rt");
@@ -41,6 +53,9 @@ void load_users(State *state){
     *state = MENU;
 }
 
+/* * Estado que le muestra un menu de seleccion al usuario y así determinar el siguiente estado.
+   * @param States State Determina el siguiente estado de la máquina.
+*/
 void menu(State *state){
     int opcion;
     puts("\t\tMENU PRINCIPAL");
@@ -84,6 +99,9 @@ void menu(State *state){
     }
 }
 
+/* * Estado en el que creamos un nuevo repositorio segun lo que desee el usuario.
+   * @param States State Determina el siguiente estado de la máquina.
+*/
 void crear_repositorio(State *state){
     *state = MENU;
     FILE* fp;
@@ -122,18 +140,22 @@ void crear_repositorio(State *state){
         strcat(sentencia, "/pruebas");
         system(sentencia);
         puts("Se ha creado con exito el repositorio!\n");
-    } 
-    
+    }     
     puts("Presiona enter para continuar... ");
     getchar();
-}   
+}
 
+/* * Estado en el que salimos del sistema.
+   * @param States State Determina el siguiente estado de la máquina.
+*/
 void salir(State *state){
-    puts("HEEEERE");
+    puts("Saliendo del sistema... ");
     system("sleep 5");
     exit(0);
 }
 
+/* * Funcion que usamos para iniciar sesion en el sistema.
+*/
 int logger(){
     char user[100], pwd[100], renglon[100], renglon2[100];
     FILE* fp = fopen("app/users.dat", "rt");
@@ -156,6 +178,9 @@ int logger(){
     return 0;
 }
 
+/* * Estado en el que el usuario tiene la posibilidad de hacer un commit.
+   * @param States State Determina el siguiente estado de la máquina.
+*/
 void commit(State *state){
     *state = MENU;
     int flag = 0;
@@ -180,6 +205,9 @@ void commit(State *state){
     loggerCommit(descripcion);
 }
 
+/* * Funcion que logea a un usuario al momento de crear un commit.
+   * @param char* descripcion recibe la descripcion para el commit realizado por el usuario.
+*/
 int loggerCommit(char *descripcion){
     int flag = 0;
     char user[100], pwd[100], renglon[100], renglon2[100];
@@ -205,5 +233,4 @@ int loggerCommit(char *descripcion){
         puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
         return 0;
     }
-    
 }

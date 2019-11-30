@@ -1,3 +1,10 @@
+
+/*
+ * @author: César Mauricio Arellano Velásquez, Allan Jair Escamilla Hernández, Raúl González Portillo.
+ * @date:   25/Noviembre/2019
+ * @file:   state_machine.c
+ * @brief:  Implementación de máquinas de estados para el sistema controlador de versiones.
+ */
 #ifndef state_machine_h
 #define state_machine_h 
 
