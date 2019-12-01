@@ -35,7 +35,10 @@ typedef struct defEstado{
     void (*process)(State* state);
 }Estados;
 
-
+typedef struct defUser{
+    char user[200];
+    char pwd[200];
+}User;
 // Prototipos de las funciones que ejecutara la maquina de estados
 void load_users(State* state);
 void menu(State* state);
@@ -43,6 +46,6 @@ void salir(State* state);
 void crear_repositorio(State* state);
 void commit(State* state);
 
-int logger();
+User logger(int* flag);
 int loggerCommit(char* descripcion);
 #endif // !state_machine_h

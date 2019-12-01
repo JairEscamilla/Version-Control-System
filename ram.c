@@ -104,14 +104,16 @@ void menu(State *state){
 void crear_repositorio(State *state){
     *state = MENU;
     FILE* fp;
-    int flag = 0;
+    int flag = 0, flag2 = 0;
+    User login;
     char repositorio[200], sentencia[200], renglon[200];
     strcpy(sentencia, "mkdir ");
     printf("Ingresar nombre del repositorio-> ");
     __fpurge(stdin);
     fgets(repositorio, sizeof(repositorio), stdin);
     repositorio[strlen(repositorio) - 1] = '\0';
-    if(!logger()){
+    login = logger(&flag2);
+    if(!flag2){
         puts("No se encuentra registrado en el sistema): ");
         puts("Presiona enter para continuar... ");
         getchar();
@@ -123,7 +125,7 @@ void crear_repositorio(State *state){
         if (strcmp(repositorio, renglon) == 0)
             flag = 1;
     }
-    fclose(fp);                         
+    fclose(fp);                          
     if(flag == 1)
         puts("Este repositorio ya existe):\n");
     else{
@@ -138,6 +140,11 @@ void crear_repositorio(State *state){
         strcat(sentencia, repositorio);
         strcat(sentencia, "/pruebas");
         system(sentencia);
+        strcpy(sentencia, repositorio);
+        strcat(sentencia, "/usuarios.dat");
+        fp = fopen(sentencia, "ab");
+        fwrite(&login, sizeof(User), 1, fp);
+        fclose(fp); 
         puts("Se ha creado con exito el repositorio!\n");
     }     
     puts("Presiona enter para continuar... ");
@@ -155,7 +162,8 @@ void salir(State *state){
 
 /* * Funcion que usamos para iniciar sesion en el sistema.
 */
-int logger(){
+User logger(int* flag){
+    User login;
     char user[100], pwd[100], renglon[100], renglon2[100];
     FILE* fp = fopen("app/users.dat", "rt");
     printf("Ingresa tu usuario-> ");
@@ -164,17 +172,19 @@ int logger(){
     printf("Ingresa tu password-> ");
     fgets(pwd, sizeof(pwd), stdin);
     pwd[strlen(pwd) - 1] = '\0';
+    strcpy(login.user, user);
+    strcpy(login.pwd, pwd);
     while (fgets(renglon, 98, fp) != NULL){
         renglon[strlen(renglon) - 1] = '\0';
         fgets(renglon2, 100, fp);
         renglon2[strlen(renglon2) - 1] = '\0';
         if(strcmp(user, renglon) == 0 && strcmp(pwd, renglon2) == 0){
             fclose(fp);
-            return 1;
+            *flag = 1;
         }
     }
     fclose(fp);
-    return 0;
+    return login;
 }
 
 /* * Estado en el que el usuario tiene la posibilidad de hacer un commit.
@@ -186,9 +196,10 @@ void commit(State *state){
     char repositorio[200], linea[200], descripcion[200];
     FILE* fp = fopen("app/repositorios.dat", "rt");
     printf("Ingresar el repositorio al que desea hacer el commit-> ");
+    __fpurge(stdin);
     fgets(repositorio, sizeof(repositorio), stdin);
     repositorio[strlen(repositorio) - 1] = '\0';
-    /*while (fgets(linea, 150, fp) != NULL){
+   while (fgets(linea, 150, fp) != NULL){
         linea[strlen(linea) - 1 ] = '\0';
         if(strcmp(repositorio, linea) == 0){
             flag = 1;
@@ -196,12 +207,16 @@ void commit(State *state){
     }
     if(flag == 0){
         printf("No se ha encontrado este repositorio):\n");
+        puts("Presiona enter para continuar... ");
+        getchar();
         return;
     }
     printf("Ingresar descripcion del commit-> ");
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
-    loggerCommit(descripcion);*/
+    loggerCommit(descripcion);
+    puts("Presiona enter para continuar... ");
+    getchar();
 }
 
 /* * Funcion que logea a un usuario al momento de crear un commit.
