@@ -17,11 +17,10 @@ int main(void){
         {MENU, menu},
         {CREAR_REPOSITORIO, crear_repositorio},
         {COMMIT, commit}
-        {EXIT, salir}
     };
 
     // Bucle infinito para la maquina de estados
-    for( ; ;){
+    for( ; ; ){
         system("clear");
         if(state > STATE_NUM){ // En caso de caer en un estado invalido, lanzamos una excepcion
             puts("Ha ocurrido un error con los estados):");
@@ -73,7 +72,7 @@ void menu(State *state){
         case 1:
             *state = CREAR_REPOSITORIO;
             break;
-        case 2: 
+        case 2:
             *state = COMMIT;
             break;
         case 3: 
@@ -124,7 +123,7 @@ void crear_repositorio(State *state){
         if (strcmp(repositorio, renglon) == 0)
             flag = 1;
     }
-    fclose(fp);
+    fclose(fp);                         
     if(flag == 1)
         puts("Este repositorio ya existe):\n");
     else{
@@ -189,7 +188,7 @@ void commit(State *state){
     printf("Ingresar el repositorio al que desea hacer el commit-> ");
     fgets(repositorio, sizeof(repositorio), stdin);
     repositorio[strlen(repositorio) - 1] = '\0';
-    while (fgets(linea, 150, fp) != NULL){
+    /*while (fgets(linea, 150, fp) != NULL){
         linea[strlen(linea) - 1 ] = '\0';
         if(strcmp(repositorio, linea) == 0){
             flag = 1;
@@ -202,7 +201,7 @@ void commit(State *state){
     printf("Ingresar descripcion del commit-> ");
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
-    loggerCommit(descripcion);
+    loggerCommit(descripcion);*/
 }
 
 /* * Funcion que logea a un usuario al momento de crear un commit.
