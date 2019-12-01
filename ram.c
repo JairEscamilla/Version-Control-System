@@ -18,7 +18,8 @@ int main(void){
         {CREAR_REPOSITORIO, crear_repositorio},
         {COMMIT, commit},
         {CAMBIAR_DE_RAMA, cambiar_rama},
-        {VER_COMMITS, ver_commits}
+        {VER_COMMITS, ver_commits},
+        {MERGE, merge}
     };
 
     // Bucle infinito para la maquina de estados
@@ -396,4 +397,62 @@ void ver_commits(State* state){
     fclose(fp);
     puts("\nPresiona enter para continuar...");
     getchar();
+}
+
+void merge(State* state){
+    *state = MENU;
+    FILE* fp;
+    char repo[200], comando[200], linea[200], aux[10], direccion[150], direccion2[150];
+    int ultimoCommit, penultimoCommit;
+    printf("Ingresar el nombre del repositorio que quiere combinar-> ");
+    __fpurge(stdin);
+    gets(repo);
+    if(!buscar_repositorios(repo)){
+        puts("No se ha encontrado este repositorio):");
+        puts("Presiona enter para continuar... ");
+        getchar();
+        return;
+    }
+    strcpy(comando, repo);
+    strcat(comando, "/branches.dat");
+    fp = fopen(comando, "rt");
+    fgets(linea, sizeof(linea), fp);
+    ultimoCommit = atoi(fgets(linea, sizeof(linea), fp)) - 1;
+    penultimoCommit = ultimoCommit - 1;
+    printf("%d, %d\n", ultimoCommit, penultimoCommit);
+    fclose(fp);
+    sprintf(aux, "%d", ultimoCommit);
+    buscarCommit(aux, repo, direccion);
+    sprintf(aux, "%d", penultimoCommit);
+    buscarCommit(aux, repo, direccion2);
+
+    puts("Presiona enter para continuar... ");
+    getchar();
+}
+void buscarCommit(char* id, char* repositorio, char direccion[]){
+    char branch[100], aux[150];
+    DIR *d;
+    struct dirent *dir;
+    strcpy(aux, repositorio);
+    strcat(aux, "/master");
+    d = opendir(aux);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, id) == 0){
+                strcpy(direccion, aux);
+            }
+        }
+        closedir(d);
+    }
+    strcpy(aux, repositorio);
+    strcat(aux, "/pruebas");
+    d = opendir(aux);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, id) == 0){
+                strcpy(direccion, aux);
+            }
+        }
+        closedir(d);
+    }
 }
