@@ -60,5 +60,5 @@ void commit(State* state);
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
 void make_commit(User temp, char* descripcion, char* repositorio);
-void mover_archivos(int id, char* repositorio);
+void mover_archivos(int id, char* repositorio, Commit commit);
 #endif // !state_machine_h

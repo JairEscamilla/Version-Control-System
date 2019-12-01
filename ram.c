@@ -283,17 +283,40 @@ void make_commit(User temp, char* descripcion, char* repositorio){
     fp = fopen(sentencia, "ab");
     fwrite(&commit, sizeof(Commit), 1, fp);
     fclose(fp);
-    mover_archivos(commit.id, repositorio);
+    mover_archivos(commit.id, repositorio, commit);
 }
 
-void mover_archivos(int id, char* repositorio){
+void mover_archivos(int id, char* repositorio, Commit commit){
+    FILE* fp;
+    char idx[10], directorioCommit[200], comando[800];
     DIR *d;
+    strcpy(directorioCommit, repositorio);
+    sprintf(idx, "%d", id);
+    strcat(directorioCommit, "/");
+    strcat(directorioCommit, commit.branch);
+    strcat(directorioCommit, "/");
+    strcat(directorioCommit, idx);
+    strcat(directorioCommit, "commit.dat");
+    fp = fopen(directorioCommit, "wb");
+    fwrite(&commit, sizeof(Commit), 1, fp);
+    fclose(fp);
     struct dirent *dir;
     d = opendir(repositorio);
+    puts("FILES DEL COMMIT: ");
     if(d){
         while ((dir = readdir(d)) != NULL){
-            if(strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0)
-                printf("%s\n", dir->d_name);
+            if(strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+                printf("\t-> %s\n", dir->d_name);
+                strcpy(comando, "cp ");
+                strcat(comando, repositorio);
+                strcat(comando, "/");
+                strcat(comando, dir->d_name);
+                strcat(comando, " ");
+                strcat(comando, repositorio);
+                strcat(comando, "/");
+                strcat(comando, commit.branch);
+                puts(comando);
+            }
         }
         closedir(d);
     }
