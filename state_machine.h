@@ -13,6 +13,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<time.h>
+#include <dirent.h> 
 
 // Definimos las etiquetas de los estados de la maquina
 typedef enum stateType{
@@ -59,4 +60,5 @@ void commit(State* state);
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
 void make_commit(User temp, char* descripcion, char* repositorio);
+void mover_archivos(int id, char* repositorio);
 #endif // !state_machine_h

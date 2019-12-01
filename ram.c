@@ -283,4 +283,18 @@ void make_commit(User temp, char* descripcion, char* repositorio){
     fp = fopen(sentencia, "ab");
     fwrite(&commit, sizeof(Commit), 1, fp);
     fclose(fp);
+    mover_archivos(commit.id, repositorio);
+}
+
+void mover_archivos(int id, char* repositorio){
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(repositorio);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0)
+                printf("%s\n", dir->d_name);
+        }
+        closedir(d);
+    }
 }
