@@ -425,7 +425,7 @@ void merge(State* state){
     buscarCommit(aux, repo, direccion);     
     sprintf(aux, "%d", penultimoCommit);
     buscarCommit(aux, repo, direccion2);
-
+    mergeFiles(direccion, direccion2, repo);
     puts("Presiona enter para continuar... ");
     getchar();
 }
@@ -440,6 +440,9 @@ void buscarCommit(char* id, char* repositorio, char direccion[]){
         while ((dir = readdir(d)) != NULL){
             if(strcmp(dir->d_name, id) == 0){
                 strcpy(direccion, aux);
+                strcat(direccion, "/");
+                strcat(direccion, id);
+                strcat(direccion, "/");
             }
         }
         closedir(d);
@@ -451,7 +454,32 @@ void buscarCommit(char* id, char* repositorio, char direccion[]){
         while ((dir = readdir(d)) != NULL){
             if(strcmp(dir->d_name, id) == 0){
                 strcpy(direccion, aux);
+                strcat(direccion, "/");
+                strcat(direccion, id);
+                strcat(direccion, "/");
             }
+        }
+        closedir(d);
+    }
+}
+
+void mergeFiles(char direccion[], char direccion2[], char repositorio[]){
+    FILE* fp, *fp2;
+    char aux1[200], aux2[200], aux[200];
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(direccion);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..")){
+                strcpy(aux, "cp ");
+                strcat(aux, direccion);
+                strcat(aux, dir->d_name);
+                strcat(aux, " ");
+                strcat(aux, repositorio);
+                strcat(aux, "/");   
+                system(aux);
+            } 
         }
         closedir(d);
     }

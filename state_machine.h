@@ -65,4 +65,5 @@ void make_commit(User temp, char* descripcion, char* repositorio);
 void mover_archivos(int id, char* repositorio, Commit commit);
 int buscar_repositorios(char* repositorio);
 void buscarCommit(char* id, char* repositorio, char direccion[]);
+void mergeFiles(char direccion[], char direccion2[], char repositorio[]);
 #endif // !state_machine_h
