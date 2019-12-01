@@ -290,16 +290,14 @@ void mover_archivos(int id, char* repositorio, Commit commit){
     FILE* fp;
     char idx[10], directorioCommit[200], comando[800];
     DIR *d;
-    strcpy(directorioCommit, repositorio);
+    strcpy(directorioCommit, "mkdir ");
+    strcat(directorioCommit, repositorio);
     sprintf(idx, "%d", id);
     strcat(directorioCommit, "/");
     strcat(directorioCommit, commit.branch);
     strcat(directorioCommit, "/");
     strcat(directorioCommit, idx);
-    strcat(directorioCommit, "commit.dat");
-    fp = fopen(directorioCommit, "wb");
-    fwrite(&commit, sizeof(Commit), 1, fp);
-    fclose(fp);
+    system(directorioCommit);
     struct dirent *dir;
     d = opendir(repositorio);
     puts("FILES DEL COMMIT: ");
@@ -315,6 +313,8 @@ void mover_archivos(int id, char* repositorio, Commit commit){
                 strcat(comando, repositorio);
                 strcat(comando, "/");
                 strcat(comando, commit.branch);
+                strcat(comando, "/");
+                strcat(comando, idx);
                 system(comando);
             }
         }
