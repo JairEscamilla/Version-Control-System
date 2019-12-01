@@ -17,7 +17,8 @@ int main(void){
         {MENU, menu},
         {CREAR_REPOSITORIO, crear_repositorio},
         {COMMIT, commit},
-        {CAMBIAR_DE_RAMA, cambiar_rama}
+        {CAMBIAR_DE_RAMA, cambiar_rama},
+        {VER_COMMITS, ver_commits}
     };
 
     // Bucle infinito para la maquina de estados
@@ -327,7 +328,7 @@ void cambiar_rama(State* state){
     *state = MENU;
     char repo[200], comando[200], linea[200], linea2[20];
     FILE* fp;
-    printf("Ingresar el repositorio al que se desea cambiar de rama: ");
+    printf("Ingresar el repositorio al que se desea cambiar de rama-> ");
     __fpurge(stdin);
     gets(repo);
     if(!buscar_repositorios(repo)){
@@ -367,4 +368,37 @@ int buscar_repositorios(char* repositorio){
     }
     fclose(fp);
     return flag;
+}
+
+void ver_commits(State* state){
+    *state = MENU;
+    char repo[200], comando[200], cadena[200];
+    Commit commits;
+    FILE* fp;
+    printf("Ingresar el repositorio del que desea ver los commits-> ");
+    __fpurge(stdin);
+    gets(repo);
+    if(!buscar_repositorios(repo)){
+        puts("No se ha encontrado este repositorio):");
+        puts("Presiona enter para continuar... ");
+        getchar();
+        return;
+    }
+    strcpy(comando, repo);
+    strcat(comando, "/commits.dat");
+    puts("LISTADO DE COMMITS: \n");
+    fp = fopen(comando, "rb");
+    fread(&commits, sizeof(Commit), 1, fp);
+    while(!feof(fp)){
+        printf("\tCommit numero %d: ", commits.id);
+        struct tm *timeinfo;
+        time(&commits.time);
+        timeinfo = localtime(&commits.time);
+        sprintf(cadena, "%d/%d/%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+        printf("\n\t\tFecha y hora: %s\t\tUsuario: %s\n\t\tRama: %s\n\t\tDescripcion: %s\n", cadena, commits.user.user, commits.branch, commits.descripcion);
+        fread(&commits, sizeof(Commit), 1, fp);
+    }
+    fclose(fp);
+    puts("\nPresiona enter para continuar...");
+    getchar();
 }

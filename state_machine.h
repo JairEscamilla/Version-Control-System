@@ -57,6 +57,7 @@ void salir(State* state);
 void crear_repositorio(State* state);
 void commit(State* state);
 void cambiar_rama(State* state);
+void ver_commits(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
