@@ -16,7 +16,8 @@ int main(void){
         {LOAD_USERS, load_users},
         {MENU, menu},
         {CREAR_REPOSITORIO, crear_repositorio},
-        {COMMIT, commit}
+        {COMMIT, commit},
+        {CAMBIAR_DE_RAMA, cambiar_rama}
     };
 
     // Bucle infinito para la maquina de estados
@@ -320,4 +321,50 @@ void mover_archivos(int id, char* repositorio, Commit commit){
         }
         closedir(d);
     }
+}
+
+void cambiar_rama(State* state){
+    *state = MENU;
+    char repo[200], comando[200], linea[200], linea2[20];
+    FILE* fp;
+    printf("Ingresar el repositorio al que se desea cambiar de rama: ");
+    __fpurge(stdin);
+    gets(repo);
+    if(!buscar_repositorios(repo)){
+        puts("No se ha encontrado este repositorio):");
+        puts("Presiona enter para continuar... ");
+        getchar();
+        return;
+    }
+    strcpy(comando, repo);
+    strcat(comando, "/branches.dat");
+    fp = fopen(comando, "rt");
+    fgets(linea, 200, fp);
+    linea[strlen(linea) - 1] = '\0';
+    if(strcmp(linea, "master") == 0){
+        strcpy(linea, "pruebas");
+    }else
+        strcpy(linea, "master");
+    fgets(linea2, 20, fp);
+    fclose(fp);
+    fp = fopen(comando, "wt");
+    fprintf(fp, "%s\n%s", linea, linea2);
+    fclose(fp);
+    printf("Se ha cambiado correctamente de rama!\nAhora se encuentra trabajando en la rama %s\n", linea);
+    puts("Presiona enter para continuar... ");
+    getchar();
+}
+
+int buscar_repositorios(char* repositorio){
+    FILE* fp = fopen("app/repositorios.dat", "rt");
+    char linea[150];
+    int flag = 0;
+    while (fgets(linea, 150, fp) != NULL){
+        linea[strlen(linea) - 1 ] = '\0';
+        if(strcmp(repositorio, linea) == 0){
+            flag = 1;
+        }
+    }
+    fclose(fp);
+    return flag;
 }

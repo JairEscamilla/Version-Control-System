@@ -56,9 +56,11 @@ void menu(State* state);
 void salir(State* state);
 void crear_repositorio(State* state);
 void commit(State* state);
+void cambiar_rama(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
 void make_commit(User temp, char* descripcion, char* repositorio);
 void mover_archivos(int id, char* repositorio, Commit commit);
+int buscar_repositorios(char* repositorio);
 #endif // !state_machine_h
