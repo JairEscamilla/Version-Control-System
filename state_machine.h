@@ -44,9 +44,8 @@ typedef struct defUser{
 
 typedef struct defCommit{
     int id;
-    char branch[100];
+    char branch[100], fechayhora[200];
     time_t time;
-    int d, m, a;
     User user;
     char descripcion[200];
 }Commit;

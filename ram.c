@@ -261,14 +261,13 @@ int loggerCommit(char* descripcion, char* repositorio){
 void make_commit(User temp, char* descripcion, char* repositorio){
     FILE* fp;
     char sentencia[100], linea[100];
-    struct tm *tm;
+    struct tm *timeinfo;
     Commit commit;
     commit.user = temp;
     commit.time = time(NULL);
-    tm = localtime(&(commit.time));
-    commit.d = tm->tm_mday;
-    commit.m = tm->tm_mon;
-    commit.a = 1900 + tm->tm_year;
+    time(&commit.time);
+    timeinfo = localtime(&commit.time);
+    sprintf(commit.fechayhora, "%d/%d/%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
     strcpy(commit.descripcion, descripcion);
     strcpy(sentencia, repositorio);
     strcat(sentencia, "/branches.dat");
@@ -391,11 +390,7 @@ void ver_commits(State* state){
     fread(&commits, sizeof(Commit), 1, fp);
     while(!feof(fp)){
         printf("\tCommit numero %d: ", commits.id);
-        struct tm *timeinfo;
-        time(&commits.time);
-        timeinfo = localtime(&commits.time);
-        sprintf(cadena, "%d/%d/%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-        printf("\n\t\tFecha y hora: %s\t\tUsuario: %s\n\t\tRama: %s\n\t\tDescripcion: %s\n", cadena, commits.user.user, commits.branch, commits.descripcion);
+        printf("\n\t\tFecha y hora: %s\t\tUsuario: %s\n\t\tRama: %s\n\t\tDescripcion: %s\n", commits.fechayhora, commits.user.user, commits.branch, commits.descripcion);
         fread(&commits, sizeof(Commit), 1, fp);
     }
     fclose(fp);
