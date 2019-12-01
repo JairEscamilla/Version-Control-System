@@ -214,7 +214,7 @@ void commit(State *state){
     printf("Ingresar descripcion del commit-> ");
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
-    loggerCommit(descripcion);
+    loggerCommit(descripcion, repositorio);
     puts("Presiona enter para continuar... ");
     getchar();
 }
@@ -222,29 +222,28 @@ void commit(State *state){
 /* * Funcion que logea a un usuario al momento de crear un commit.
    * @param char* descripcion recibe la descripcion para el commit realizado por el usuario.
 */
-int loggerCommit(char *descripcion){
+int loggerCommit(char* descripcion, char* repositorio){
     int flag = 0;
-    char user[100], pwd[100], renglon[100], renglon2[100];
-    FILE *fp = fopen("app/users.dat", "rt");
+    char renglon[200], renglon2[200], file[100];
+    FILE *fp;
+    User usuarios;
+    strcpy(file, repositorio);
+    strcat(file, "/usuarios.dat");
+    fp = fopen(file, "rb");
     printf("Ingresa tu usuario-> ");
-    fgets(user, sizeof(user), stdin);
-    user[strlen(user) - 1] = '\0';
+    gets(renglon);
     printf("Ingresa tu password-> ");
-    fgets(pwd, sizeof(pwd), stdin);
-    pwd[strlen(pwd) - 1] = '\0';
-    while (fgets(renglon, 98, fp) != NULL){
-        renglon[strlen(renglon) - 1] = '\0';
-        fgets(renglon2, 100, fp);
-        renglon2[strlen(renglon2) - 1] = '\0';
-        if (strcmp(user, renglon) == 0 && strcmp(pwd, renglon2) == 0){
-            fclose(fp);
+    fread(&usuarios, sizeof(User), 1, fp);
+    gets(renglon2);
+    while (!feof(fp)){
+        fread(&usuarios, sizeof(User), 1, fp);
+        if (strcmp(usuarios.user, renglon) == 0 && strcmp(usuarios.pwd, renglon2) == 0)
             flag =  1;
-        }
     }
     fclose(fp);
-    flag =  0;
     if(flag == 0){
         puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
         return 0;
-    }
+    }else
+        puts("Usuario encontrado");
 }

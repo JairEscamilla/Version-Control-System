@@ -47,5 +47,5 @@ void crear_repositorio(State* state);
 void commit(State* state);
 
 User logger(int* flag);
-int loggerCommit(char* descripcion);
+int loggerCommit(char* descripcion, char* repositorio);
 #endif // !state_machine_h
