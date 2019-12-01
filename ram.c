@@ -145,6 +145,11 @@ void crear_repositorio(State *state){
         fp = fopen(sentencia, "ab");
         fwrite(&login, sizeof(User), 1, fp);
         fclose(fp); 
+        strcpy(sentencia, repositorio);
+        strcat(sentencia, "/branches.dat");
+        fp = fopen(sentencia, "at");
+        fprintf(fp, "master\n0\n");
+        fclose(fp);
         puts("Se ha creado con exito el repositorio!\n");
     }     
     puts("Presiona enter para continuar... ");
@@ -215,6 +220,7 @@ void commit(State *state){
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
     loggerCommit(descripcion, repositorio);
+    puts("Commit realizado con exito!");
     puts("Presiona enter para continuar... ");
     getchar();
 }
@@ -226,7 +232,7 @@ int loggerCommit(char* descripcion, char* repositorio){
     int flag = 0;
     char renglon[200], renglon2[200], file[100];
     FILE *fp;
-    User usuarios;
+    User usuarios, temp;
     strcpy(file, repositorio);
     strcat(file, "/usuarios.dat");
     fp = fopen(file, "rb");
@@ -237,13 +243,44 @@ int loggerCommit(char* descripcion, char* repositorio){
     gets(renglon2);
     while (!feof(fp)){
         fread(&usuarios, sizeof(User), 1, fp);
-        if (strcmp(usuarios.user, renglon) == 0 && strcmp(usuarios.pwd, renglon2) == 0)
+        if (strcmp(usuarios.user, renglon) == 0 && strcmp(usuarios.pwd, renglon2) == 0){
+            temp = usuarios;
             flag =  1;
+        }
     }
     fclose(fp);
     if(flag == 0){
         puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
         return 0;
-    }else
-        puts("Usuario encontrado");
+    }
+    make_commit(temp, descripcion, repositorio);
+}
+
+void make_commit(User temp, char* descripcion, char* repositorio){
+    FILE* fp;
+    char sentencia[100], linea[100];
+    struct tm *tm;
+    Commit commit;
+    commit.user = temp;
+    commit.time = time(NULL);
+    tm = localtime(&(commit.time));
+    commit.d = tm->tm_mday;
+    commit.m = tm->tm_mon;
+    commit.a = 1900 + tm->tm_year;
+    strcpy(commit.descripcion, descripcion);
+    strcpy(sentencia, repositorio);
+    strcat(sentencia, "/branches.dat");
+    fp = fopen(sentencia, "rt");
+    strcpy(commit.branch, fgets(linea, 100, fp));
+    commit.branch[strlen(commit.branch) - 1] = '\0';
+    commit.id = atoi(fgets(linea, 10, fp));
+    fclose(fp);
+    fp = fopen(sentencia, "wt");
+    fprintf(fp, "%s\n%d\n", commit.branch, commit.id + 1);
+    fclose(fp);
+    strcpy(sentencia, repositorio);
+    strcat(sentencia, "/commits.dat");
+    fp = fopen(sentencia, "ab");
+    fwrite(&commit, sizeof(Commit), 1, fp);
+    fclose(fp);
 }

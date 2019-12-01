@@ -12,6 +12,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<time.h>
 
 // Definimos las etiquetas de los estados de la maquina
 typedef enum stateType{
@@ -39,6 +40,15 @@ typedef struct defUser{
     char user[200];
     char pwd[200];
 }User;
+
+typedef struct defCommit{
+    int id;
+    char branch[100];
+    time_t time;
+    int d, m, a;
+    User user;
+    char descripcion[200];
+}Commit;
 // Prototipos de las funciones que ejecutara la maquina de estados
 void load_users(State* state);
 void menu(State* state);
@@ -48,4 +58,5 @@ void commit(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
+void make_commit(User temp, char* descripcion, char* repositorio);
 #endif // !state_machine_h
