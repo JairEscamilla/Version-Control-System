@@ -422,7 +422,7 @@ void merge(State* state){
     printf("%d, %d\n", ultimoCommit, penultimoCommit);
     fclose(fp);
     sprintf(aux, "%d", ultimoCommit);
-    buscarCommit(aux, repo, direccion);
+    buscarCommit(aux, repo, direccion);     
     sprintf(aux, "%d", penultimoCommit);
     buscarCommit(aux, repo, direccion2);
 
