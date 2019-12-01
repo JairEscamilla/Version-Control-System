@@ -315,7 +315,7 @@ void mover_archivos(int id, char* repositorio, Commit commit){
                 strcat(comando, repositorio);
                 strcat(comando, "/");
                 strcat(comando, commit.branch);
-                puts(comando);
+                system(comando);
             }
         }
         closedir(d);
