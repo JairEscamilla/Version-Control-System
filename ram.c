@@ -326,7 +326,9 @@ void mover_archivos(int id, char* repositorio, Commit commit){
 
 void cambiar_rama(State* state){
     *state = MENU;
-    char repo[200], comando[200], linea[200], linea2[20];
+    DIR *d;
+    struct dirent *dir;
+    char repo[200], comando[200], linea[200], linea2[20], aux[200], aux2[200], mayor[10] = "-1";
     FILE* fp;
     printf("Ingresar el repositorio al que se desea cambiar de rama-> ");
     __fpurge(stdin);
@@ -351,6 +353,37 @@ void cambiar_rama(State* state){
     fp = fopen(comando, "wt");
     fprintf(fp, "%s\n%s", linea, linea2);
     fclose(fp);
+
+    strcpy(aux, repo);
+    strcat(aux, "/");
+    strcat(aux, linea);
+    strcat(aux, "/");
+    d = opendir(aux);
+    if(d){
+        while ((dir = readdir(d)) != NULL)
+            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0)
+                if(atoi(dir->d_name) > atoi(mayor))
+                    strcpy(mayor, dir->d_name);
+        closedir(d);
+    }
+    if(atoi(mayor) != -1){
+        strcat(aux, mayor);
+        d = opendir(aux);
+        if(d){
+            while ((dir = readdir(d)) != NULL)
+                if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0){
+                    strcpy(aux2, "cp ");
+                    strcat(aux2, aux);
+                    strcat(aux2, "/");
+                    strcat(aux2, dir->d_name);
+                    strcat(aux2, " ");
+                    strcat(aux2, repo);
+                    strcat(aux2, "/");
+                    system(aux2);
+                }
+            closedir(d);
+        }
+    }
     printf("Se ha cambiado correctamente de rama!\nAhora se encuentra trabajando en la rama %s\n", linea);
     puts("Presiona enter para continuar... ");
     getchar();
@@ -419,13 +452,13 @@ void merge(State* state){
     fgets(linea, sizeof(linea), fp);
     ultimoCommit = atoi(fgets(linea, sizeof(linea), fp)) - 1;
     penultimoCommit = ultimoCommit - 1;
-    printf("%d, %d\n", ultimoCommit, penultimoCommit);
     fclose(fp);
     sprintf(aux, "%d", ultimoCommit);
     buscarCommit(aux, repo, direccion);     
     sprintf(aux, "%d", penultimoCommit);
     buscarCommit(aux, repo, direccion2);
     mergeFiles(direccion, direccion2, repo);
+    puts("Las ramas han sido combinadas de manera exitosa!");
     puts("Presiona enter para continuar... ");
     getchar();
 }
