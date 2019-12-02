@@ -564,11 +564,18 @@ int buscarArchivos(char* array[], int counter, char buscado[]){
 void ver_repositorios(State* state){
     *state = MENU;
     FILE* fp = fopen("app/repositorios.dat", "rt");
-    char renglon[180];
+    FILE* fa;
+    User usuarios;
+    char renglon[180], auxiliar[200];
     puts("\t\tRepositorios creados en el sistema\n");
     while (fgets(renglon, 100, fp) != NULL){
         renglon[strlen(renglon) - 1 ] = '\0';
-        printf("\t-> %s: UserPrueba\n\n", renglon);
+        strcpy(auxiliar, renglon);
+        strcat(auxiliar, "/usuarios.dat");
+        fa = fopen(auxiliar, "rb"); 
+        fread(&usuarios, sizeof(User), 1, fa);
+        printf("\t-> %s: %s\n", renglon, usuarios.user);
+        fclose(fa);
     }
     fclose(fp);
     puts("Presiona enter para continuar...");
