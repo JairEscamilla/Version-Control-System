@@ -466,12 +466,16 @@ void buscarCommit(char* id, char* repositorio, char direccion[]){
 void mergeFiles(char direccion[], char direccion2[], char repositorio[]){
     FILE* fp, *fp2;
     char aux1[200], aux2[200], aux[200];
+    char* merged[100];
+    int counter = 0;
     DIR *d;
     struct dirent *dir;
     d = opendir(direccion);
     if(d){
         while ((dir = readdir(d)) != NULL){
             if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..")){
+                merged[counter] = dir->d_name;
+                counter++;
                 strcpy(aux, "cp ");
                 strcat(aux, direccion);
                 strcat(aux, dir->d_name);
@@ -483,4 +487,42 @@ void mergeFiles(char direccion[], char direccion2[], char repositorio[]){
         }
         closedir(d);
     }
+    d = opendir(direccion2);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..")){
+                if(buscarArchivos(merged, counter, dir->d_name)){
+                    strcpy(aux1, direccion);
+                    strcat(aux1, dir->d_name);
+                    strcpy(aux2, direccion2);
+                    strcat(aux2, dir->d_name);
+                    fp = fopen(aux1, "rt");
+                    fp2 = fopen(aux2, "rt");    
+                    fseek(fp, 0L, SEEK_END);
+                    fseek(fp2, 0L, SEEK_END);
+                    if(ftell(fp2) >= ftell(fp)){
+                        strcpy(aux, "cp ");
+                        strcat(aux, direccion2);
+                        strcat(aux, dir->d_name);
+                        strcat(aux, " ");
+                        strcat(aux, repositorio);
+                        strcat(aux, "/");   
+                        system(aux);
+                    }
+                    fclose(fp);
+                    fclose(fp2);
+                }
+            } 
+        }
+        closedir(d);
+    }
+    
+}
+
+int buscarArchivos(char* array[], int counter, char buscado[]){
+    int flag = 0;
+    for(int i = 0; i < counter; i++)
+        if(strcmp(array[i], buscado) == 0)
+            flag = 1;
+    return flag;
 }
