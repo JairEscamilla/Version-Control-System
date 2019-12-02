@@ -19,7 +19,8 @@ int main(void){
         {COMMIT, commit},
         {CAMBIAR_DE_RAMA, cambiar_rama},
         {VER_COMMITS, ver_commits},
-        {MERGE, merge}
+        {MERGE, merge},
+        {VER_REPOSITORIOS, ver_repositorios}
     };
 
     // Bucle infinito para la maquina de estados
@@ -558,4 +559,19 @@ int buscarArchivos(char* array[], int counter, char buscado[]){
         if(strcmp(array[i], buscado) == 0)
             flag = 1;
     return flag;
+}
+
+void ver_repositorios(State* state){
+    *state = MENU;
+    FILE* fp = fopen("app/repositorios.dat", "rt");
+    char renglon[180];
+    puts("\t\tRepositorios creados en el sistema\n");
+    while (fgets(renglon, 100, fp) != NULL){
+        renglon[strlen(renglon) - 1 ] = '\0';
+        printf("\t-> %s: UserPrueba\n\n", renglon);
+    }
+    fclose(fp);
+    puts("Presiona enter para continuar...");
+    __fpurge(stdin);
+    getchar();
 }
