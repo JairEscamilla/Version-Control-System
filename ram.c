@@ -188,7 +188,6 @@ User logger(int* flag){
         fgets(renglon2, 100, fp);
         renglon2[strlen(renglon2) - 1] = '\0';
         if(strcmp(user, renglon) == 0 && strcmp(pwd, renglon2) == 0){
-            fclose(fp);
             *flag = 1;
         }
     }
