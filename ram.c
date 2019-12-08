@@ -140,10 +140,6 @@ void crear_repositorio(State *state){
         system(sentencia);
         strcat(sentencia, "/master");
         system(sentencia);
-        strcpy(sentencia, "mkdir ");
-        strcat(sentencia, repositorio);
-        strcat(sentencia, "/pruebas");
-        system(sentencia);
         strcpy(sentencia, repositorio);
         strcat(sentencia, "/usuarios.dat");
         fp = fopen(sentencia, "ab");
