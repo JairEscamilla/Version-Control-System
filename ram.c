@@ -635,7 +635,7 @@ void crear_rama(State* state){
         strcat(comando, "/");
         strcat(comando, "branches.dat");
         fp = fopen(comando, "at");
-        fprintf(fp, "%s\n0\n", branch);
+        fprintf(fp, "%s\n", branch);
         fclose(fp);
         puts("Se ha creado con exito la rama!");
     }
