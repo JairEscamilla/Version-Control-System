@@ -82,7 +82,7 @@ void menu(State *state){
             *state = CREAR_RAMA;
             break;
         case 3: 
-            *state = CAMBIAR_DE_RAMA;
+            *state = COMMIT;
             break;
         case 4: 
             *state = VER_COMMITS;
@@ -150,7 +150,12 @@ void crear_repositorio(State *state){
         strcpy(sentencia, repositorio);
         strcat(sentencia, "/branches.dat");
         fp = fopen(sentencia, "at");
-        fprintf(fp, "master\n0\n");
+        fprintf(fp, "master\n");
+        fclose(fp);
+        strcpy(sentencia, repositorio);
+        strcat(sentencia, "/ids.dat");
+        fp = fopen(sentencia, "wt");
+        fprintf(fp, "0\n");
         fclose(fp);
         puts("Se ha creado con exito el repositorio!\n");
     }     
@@ -198,29 +203,52 @@ User logger(int* flag){
 */
 void commit(State *state){
     *state = MENU;
-    int flag = 0;
-    char repositorio[200], linea[200], descripcion[200];
+    int flag = 0, number = -1;
+    char repositorio[200], linea[200], descripcion[200], branch[200], comando[200], linea1[200], linea2[200];
     FILE* fp = fopen("app/repositorios.dat", "rt");
     printf("Ingresar el repositorio al que desea hacer el commit-> ");
     __fpurge(stdin);
     fgets(repositorio, sizeof(repositorio), stdin);
     repositorio[strlen(repositorio) - 1] = '\0';
-   while (fgets(linea, 150, fp) != NULL){
+    while (fgets(linea, 150, fp) != NULL){
         linea[strlen(linea) - 1 ] = '\0';
         if(strcmp(repositorio, linea) == 0){
             flag = 1;
         }
     }
+    fclose(fp);
     if(flag == 0){
         printf("No se ha encontrado este repositorio):\n");
         puts("Presiona enter para continuar... ");
         getchar();
         return;
     }
+    printf("Ingresar branch a la que desea hacer commit-> ");
+    gets(branch);
+    strcpy(comando, repositorio);
+    strcat(comando, "/");
+    strcat(comando, "branches.dat");
+    fp = fopen(comando, "rt");
+    while(fgets(linea1, 200, fp) != NULL){
+        linea1[strlen(linea1) - 1] = '\0';
+        fgets(linea2, 200, fp);
+        linea2[strlen(linea2) - 1] = '\0';
+        if(strcmp(linea1, branch) == 0){
+            number = atoi(linea2);
+        }
+    }
+    fclose(fp);
+    if(number == -1){
+        printf("No se ha encontrado este branch):\n");
+        puts("Presiona enter para continuar... ");
+        getchar();
+        return;
+    }
+    number++;
     printf("Ingresar descripcion del commit-> ");
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
-    loggerCommit(descripcion, repositorio);
+    loggerCommit(descripcion, repositorio, number);
     puts("Commit realizado con exito!");
     puts("Presiona enter para continuar... ");
     getchar();
@@ -229,7 +257,7 @@ void commit(State *state){
 /* * Funcion que logea a un usuario al momento de crear un commit.
    * @param char* descripcion recibe la descripcion para el commit realizado por el usuario.
 */
-int loggerCommit(char* descripcion, char* repositorio){
+int loggerCommit(char* descripcion, char* repositorio, int number){
     int flag = 0;
     char renglon[200], renglon2[200], file[100];
     FILE *fp;
@@ -254,10 +282,10 @@ int loggerCommit(char* descripcion, char* repositorio){
         puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
         return 0;
     }
-    make_commit(temp, descripcion, repositorio);
+    make_commit(temp, descripcion, repositorio, number);
 }
 
-void make_commit(User temp, char* descripcion, char* repositorio){
+void make_commit(User temp, char* descripcion, char* repositorio, int number){
     FILE* fp;
     char sentencia[100], linea[100];
     struct tm *timeinfo;
@@ -271,9 +299,10 @@ void make_commit(User temp, char* descripcion, char* repositorio){
     strcpy(sentencia, repositorio);
     strcat(sentencia, "/branches.dat");
     fp = fopen(sentencia, "rt");
-    strcpy(commit.branch, fgets(linea, 100, fp));
+    /*strcpy(commit.branch, fgets(linea, 100, fp));
     commit.branch[strlen(commit.branch) - 1] = '\0';
-    commit.id = atoi(fgets(linea, 10, fp));
+    commit.id = atoi(fgets(linea, 10, fp));*/
+
     fclose(fp);
     fp = fopen(sentencia, "wt");
     fprintf(fp, "%s\n%d\n", commit.branch, commit.id + 1);
