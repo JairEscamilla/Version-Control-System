@@ -583,6 +583,7 @@ void ver_repositorios(State* state){
 void crear_rama(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
+    FILE* fp;
     char repo[200], comando[200], branch[200];
     printf("Ingresar nombre del repositorio al que desea crear una rama: ");
     __fpurge(stdin);
@@ -600,8 +601,15 @@ void crear_rama(State* state){
     strcat(comando, repo);
     strcat(comando, "/");
     strcat(comando, branch);
-    system(comando);
-    puts("Se ha creado con exito la rama!");
+    if(system(comando) == 0){
+        strcpy(comando, repo);
+        strcat(comando, "/");
+        strcat(comando, "branches.dat");
+        fp = fopen(comando, "at");
+        fprintf(fp, "%s\n0\n", branch);
+        fclose(fp);
+        puts("Se ha creado con exito la rama!");
+    }
     puts("Presiona enter para continuar...");
     getchar();
 }
