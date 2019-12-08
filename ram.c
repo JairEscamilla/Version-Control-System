@@ -204,7 +204,7 @@ User logger(int* flag){
 void commit(State *state){
     *state = MENU;
     int flag = 0, number = -1;
-    char repositorio[200], linea[200], descripcion[200], branch[200], comando[200], linea1[200], linea2[200];
+    char repositorio[200], linea[200], descripcion[200], branch[200], comando[200], linea1[200];
     FILE* fp = fopen("app/repositorios.dat", "rt");
     printf("Ingresar el repositorio al que desea hacer el commit-> ");
     __fpurge(stdin);
@@ -231,11 +231,8 @@ void commit(State *state){
     fp = fopen(comando, "rt");
     while(fgets(linea1, 200, fp) != NULL){
         linea1[strlen(linea1) - 1] = '\0';
-        fgets(linea2, 200, fp);
-        linea2[strlen(linea2) - 1] = '\0';
-        if(strcmp(linea1, branch) == 0){
-            number = atoi(linea2);
-        }
+        if(strcmp(linea1, branch) == 0)
+            number = 1;
     }
     fclose(fp);
     if(number == -1){
@@ -244,11 +241,10 @@ void commit(State *state){
         getchar();
         return;
     }
-    number++;
     printf("Ingresar descripcion del commit-> ");
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
-    loggerCommit(descripcion, repositorio, number);
+    loggerCommit(descripcion, repositorio, branch);
     puts("Commit realizado con exito!");
     puts("Presiona enter para continuar... ");
     getchar();
@@ -257,7 +253,7 @@ void commit(State *state){
 /* * Funcion que logea a un usuario al momento de crear un commit.
    * @param char* descripcion recibe la descripcion para el commit realizado por el usuario.
 */
-int loggerCommit(char* descripcion, char* repositorio, int number){
+int loggerCommit(char* descripcion, char* repositorio, char branch[]){
     int flag = 0;
     char renglon[200], renglon2[200], file[100];
     FILE *fp;
@@ -282,10 +278,10 @@ int loggerCommit(char* descripcion, char* repositorio, int number){
         puts("Este usuario no tiene permisos para hacer commits sobre este repositorio):");
         return 0;
     }
-    make_commit(temp, descripcion, repositorio, number);
+    make_commit(temp, descripcion, repositorio, branch);
 }
 
-void make_commit(User temp, char* descripcion, char* repositorio, int number){
+void make_commit(User temp, char* descripcion, char* repositorio, char branch[]){
     FILE* fp;
     char sentencia[100], linea[100];
     struct tm *timeinfo;
@@ -297,16 +293,12 @@ void make_commit(User temp, char* descripcion, char* repositorio, int number){
     sprintf(commit.fechayhora, "%d/%d/%d-%d:%d:%d\n", timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
     strcpy(commit.descripcion, descripcion);
     strcpy(sentencia, repositorio);
-    strcat(sentencia, "/branches.dat");
-    fp = fopen(sentencia, "rt");
-    /*strcpy(commit.branch, fgets(linea, 100, fp));
-    commit.branch[strlen(commit.branch) - 1] = '\0';
-    commit.id = atoi(fgets(linea, 10, fp));*/
-
+    strcat(sentencia, "/ids.dat");
+    strcpy(commit.branch, branch);
+    fp = fopen(sentencia, "rt");   
+    commit.id = atoi(fgets(linea, 10, fp));
     fclose(fp);
-    fp = fopen(sentencia, "wt");
-    fprintf(fp, "%s\n%d\n", commit.branch, commit.id + 1);
-    fclose(fp);
+    commit.id++;
     strcpy(sentencia, repositorio);
     strcat(sentencia, "/commits.dat");
     fp = fopen(sentencia, "ab");
@@ -317,8 +309,13 @@ void make_commit(User temp, char* descripcion, char* repositorio, int number){
 
 void mover_archivos(int id, char* repositorio, Commit commit){
     FILE* fp;
-    char idx[10], directorioCommit[200], comando[800];
+    char idx[10], directorioCommit[200], comando[800], direccion[200], ids[200];
     DIR *d;
+    strcpy(ids, repositorio);
+    strcat(ids, "/ids.dat");
+    FILE* fp2 = fopen(ids, "wt");
+    fprintf(fp2, "%d\n", id);
+    fclose(fp2);
     strcpy(directorioCommit, "mkdir ");
     strcat(directorioCommit, repositorio);
     sprintf(idx, "%d", id);
@@ -327,8 +324,12 @@ void mover_archivos(int id, char* repositorio, Commit commit){
     strcat(directorioCommit, "/");
     strcat(directorioCommit, idx);
     system(directorioCommit);
+    puts(directorioCommit);
     struct dirent *dir;
-    d = opendir(repositorio);
+    strcpy(direccion, repositorio);
+    strcat(direccion, "/");
+    strcat(direccion, commit.branch);
+    d = opendir(direccion);
     puts("FILES DEL COMMIT: ");
     if(d){
         while ((dir = readdir(d)) != NULL){
@@ -344,7 +345,7 @@ void mover_archivos(int id, char* repositorio, Commit commit){
                 strcat(comando, commit.branch);
                 strcat(comando, "/");
                 strcat(comando, idx);
-                system(comando);
+                //system(comando);
             }
         }
         closedir(d);
