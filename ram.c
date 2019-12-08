@@ -333,7 +333,7 @@ void mover_archivos(int id, char* repositorio, Commit commit){
     puts("FILES DEL COMMIT: ");
     if(d){
         while ((dir = readdir(d)) != NULL){
-            if(strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+            if(dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
                 printf("\t-> %s\n", dir->d_name);
                 strcpy(comando, "cp ");
                 strcat(comando, repositorio);
