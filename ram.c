@@ -582,8 +582,26 @@ void ver_repositorios(State* state){
 
 void crear_rama(State* state){
     *state = MENU;
-    puts("A crear reama");
+    int flag = 0, flag2 = 0;
+    char repo[200], comando[200], branch[200];
+    printf("Ingresar nombre del repositorio al que desea crear una rama: ");
     __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return;
+    }
+    printf("Ingresar nombre de la rama: ");
+    gets(branch);
+    strcpy(comando, "mkdir ");
+    strcat(comando, repo);
+    strcat(comando, "/");
+    strcat(comando, branch);
+    system(comando);
+    puts("Se ha creado con exito la rama!");
     puts("Presiona enter para continuar...");
     getchar();
 }
