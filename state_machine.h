@@ -20,6 +20,7 @@ typedef enum stateType{
     LOAD_USERS,
     MENU,
     CREAR_REPOSITORIO,
+    CREAR_RAMA,
     COMMIT,
     CAMBIAR_DE_RAMA, 
     VER_COMMITS,
@@ -59,6 +60,7 @@ void cambiar_rama(State* state);
 void ver_commits(State* state);
 void merge(State* state);
 void ver_repositorios(State* state);
+void crear_rama(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio);
@@ -68,4 +70,5 @@ int buscar_repositorios(char* repositorio);
 void buscarCommit(char* id, char* repositorio, char direccion[]);
 void mergeFiles(char direccion[], char direccion2[], char repositorio[]);
 int buscarArchivos(char* array[], int counter, char buscado[]);
+
 #endif // !state_machine_h

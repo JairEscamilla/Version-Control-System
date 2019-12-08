@@ -16,6 +16,7 @@ int main(void){
         {LOAD_USERS, load_users},
         {MENU, menu},
         {CREAR_REPOSITORIO, crear_repositorio},
+        {CREAR_RAMA, crear_rama},
         {COMMIT, commit},
         {CAMBIAR_DE_RAMA, cambiar_rama},
         {VER_COMMITS, ver_commits},
@@ -63,13 +64,14 @@ void menu(State *state){
     int opcion;
     puts("\t\tMENU PRINCIPAL");
     puts("\t1.- Crear repositorio.");
-    puts("\t2.- Hacer commit sobre un repositorio.");
-    puts("\t3.- Cambiar de rama un repositorio.");
-    puts("\t4.- Ver commits de un repositorio.");
-    puts("\t5.- Combinar ramas de un repositorio.");
-    puts("\t6.- Listar repositorios.");
-    puts("\t7.- Agregar colaboradores a un repositorio.");
-    puts("\t8.- Salir.\n");
+    puts("\t2.- Crear rama.");
+    puts("\t3.- Hacer commit sobre un repositorio.");
+    puts("\t4.- Cambiar de rama un repositorio.");
+    puts("\t5.- Ver commits de un repositorio.");
+    puts("\t6.- Combinar ramas de un repositorio.");
+    puts("\t7.- Listar repositorios.");
+    puts("\t8.- Agregar colaboradores a un repositorio.");
+    puts("\t9.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
     switch (opcion){
@@ -77,7 +79,7 @@ void menu(State *state){
             *state = CREAR_REPOSITORIO;
             break;
         case 2:
-            *state = COMMIT;
+            *state = CREAR_RAMA;
             break;
         case 3: 
             *state = CAMBIAR_DE_RAMA;
@@ -575,5 +577,13 @@ void ver_repositorios(State* state){
     fclose(fp);
     puts("Presiona enter para continuar...");
     __fpurge(stdin);
+    getchar();
+}
+
+void crear_rama(State* state){
+    *state = MENU;
+    puts("A crear reama");
+    __fpurge(stdin);
+    puts("Presiona enter para continuar...");
     getchar();
 }
