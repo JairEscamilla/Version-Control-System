@@ -78,7 +78,7 @@ void menu(State *state){
     puts("\t8.- Pull Request.");
     puts("\t9.- Ver pull requests.");
     puts("\t10.- Actualizar rama.");
-    puts("\t11.- Crear usuario.");
+    puts("\t11.- Agregar colaboradores.");
     puts("\t12.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
@@ -920,8 +920,6 @@ void actualizar(State* state){
                 strcat(comando, branch);
                 strcat(comando, "/");
                 system(comando);
-                //puts(dir->d_name);
-                //printf("%ld\n", dir->d_ino);
             }
         }
 
@@ -936,14 +934,27 @@ void actualizar(State* state){
 void crear_user(State* state){
     *state = MENU;
     FILE* fp = fopen("app/users.dat", "at");
-    char user[100], pwd[200];
+    char sentencia[500], repo[200];
+    User user;
     printf("Ingresar usuario-> ");
     __fpurge(stdin);
-    gets(user);
+    gets(user.user);
     printf("Ingresar password-> ");
-    gets(pwd);
-    fprintf(fp, "%s\n", user);
-    fprintf(fp, "%s\n", pwd);
+    gets(user.pwd);
+    printf("Ingresar repositorio al que desea agregar este usuario-> ");
+    gets(repo);
+    fprintf(fp, "%s\n", user.user);
+    fprintf(fp, "%s\n", user.pwd);
+    fclose(fp);
+    strcpy(sentencia, repo);
+    strcat(sentencia, "/usuarios.dat");
+    
+    fp = fopen(sentencia, "ab");
+    if(fp == NULL){
+        puts("Ha ocurrido un error):");
+        return;
+    }
+    fwrite(&user, sizeof(User), 1, fp);
     fclose(fp);
     puts("Se ha creado con exito el nuevo user!");
     puts("Presiona enter para continuar...");
