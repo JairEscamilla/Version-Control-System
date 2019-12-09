@@ -393,71 +393,9 @@ void mover_archivos(int id, char* repositorio, Commit commit){
     puts("Commit realizado con exito!");
 }
 
-void cambiar_rama(State* state){
-    *state = MENU;
-    DIR *d;
-    struct dirent *dir;
-    char repo[200], comando[200], linea[200], linea2[20], aux[200], aux2[200], mayor[10] = "-1";
-    FILE* fp;
-    printf("Ingresar el repositorio al que se desea cambiar de rama-> ");
-    __fpurge(stdin);
-    gets(repo);
-    if(!buscar_repositorios(repo)){
-        puts("No se ha encontrado este repositorio):");
-        puts("Presiona enter para continuar... ");
-        getchar();
-        return;
-    }
-    strcpy(comando, repo);
-    strcat(comando, "/branches.dat");
-    fp = fopen(comando, "rt");
-    fgets(linea, 200, fp);
-    linea[strlen(linea) - 1] = '\0';
-    if(strcmp(linea, "master") == 0){
-        strcpy(linea, "pruebas");
-    }else
-        strcpy(linea, "master");
-    fgets(linea2, 20, fp);
-    fclose(fp);
-    fp = fopen(comando, "wt");
-    fprintf(fp, "%s\n%s", linea, linea2);
-    fclose(fp);
-
-    strcpy(aux, repo);
-    strcat(aux, "/");
-    strcat(aux, linea);
-    strcat(aux, "/");
-    d = opendir(aux);
-    if(d){
-        while ((dir = readdir(d)) != NULL)
-            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0)
-                if(atoi(dir->d_name) > atoi(mayor))
-                    strcpy(mayor, dir->d_name);
-        closedir(d);
-    }
-    if(atoi(mayor) != -1){
-        strcat(aux, mayor);
-        d = opendir(aux);
-        if(d){
-            while ((dir = readdir(d)) != NULL)
-                if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0){
-                    strcpy(aux2, "cp ");
-                    strcat(aux2, aux);
-                    strcat(aux2, "/");
-                    strcat(aux2, dir->d_name);
-                    strcat(aux2, " ");
-                    strcat(aux2, repo);
-                    strcat(aux2, "/");
-                    system(aux2);
-                }
-            closedir(d);
-        }
-    }
-    printf("Se ha cambiado correctamente de rama!\nAhora se encuentra trabajando en la rama %s\n", linea);
-    puts("Presiona enter para continuar... ");
-    getchar();
-}
-
+/* * Funcion que busca un repositorio.
+   * @param char* repositorio. Nombre del repositorio que se quiere buscar.
+*/
 int buscar_repositorios(char* repositorio){
     FILE* fp = fopen("app/repositorios.dat", "rt");
     char linea[150];
@@ -472,6 +410,9 @@ int buscar_repositorios(char* repositorio){
     return flag;
 }
 
+/* * Estado que ve los commits de un repositorio dado.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void ver_commits(State* state){
     *state = MENU;
     char repo[200], comando[200], cadena[200];
@@ -500,37 +441,11 @@ void ver_commits(State* state){
     puts("\nPresiona enter para continuar...");
     getchar();
 }
-
-void merge(State* state){
-    *state = MENU;
-    FILE* fp;
-    char repo[200], comando[200], linea[200], aux[10], direccion[150], direccion2[150];
-    int ultimoCommit, penultimoCommit;
-    printf("Ingresar el nombre del repositorio que quiere combinar-> ");
-    __fpurge(stdin);
-    gets(repo);
-    if(!buscar_repositorios(repo)){
-        puts("No se ha encontrado este repositorio):");
-        puts("Presiona enter para continuar... ");
-        getchar();
-        return;
-    }
-    strcpy(comando, repo);
-    strcat(comando, "/branches.dat");
-    fp = fopen(comando, "rt");
-    fgets(linea, sizeof(linea), fp);
-    ultimoCommit = atoi(fgets(linea, sizeof(linea), fp)) - 1;
-    penultimoCommit = ultimoCommit - 1;
-    fclose(fp);
-    sprintf(aux, "%d", ultimoCommit);
-    buscarCommit(aux, repo, direccion);     
-    sprintf(aux, "%d", penultimoCommit);
-    buscarCommit(aux, repo, direccion2);
-    mergeFiles(direccion, direccion2, repo);
-    puts("Las ramas han sido combinadas de manera exitosa!");
-    puts("Presiona enter para continuar... ");
-    getchar();
-}
+/* * Funcion que busca un commit.
+   * @param char* id. Id del commit a buscar.
+   * @param char* repositorio. Nombre del repositorio donde se realiza el commit.
+   * @param char direccion[]. Direccion donde se va a buscar el commit.
+*/
 void buscarCommit(char* id, char* repositorio, char direccion[]){
     char branch[100], aux[150];
     DIR *d;
@@ -565,62 +480,11 @@ void buscarCommit(char* id, char* repositorio, char direccion[]){
     }
 }
 
-void mergeFiles(char direccion[], char direccion2[], char repositorio[]){
-    FILE* fp, *fp2;
-    char aux1[200], aux2[200], aux[200];
-    char* merged[100];
-    int counter = 0;
-    DIR *d;
-    struct dirent *dir;
-    d = opendir(direccion);
-    if(d){
-        while ((dir = readdir(d)) != NULL){
-            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..")){
-                merged[counter] = dir->d_name;
-                counter++;
-                strcpy(aux, "cp ");
-                strcat(aux, direccion);
-                strcat(aux, dir->d_name);
-                strcat(aux, " ");
-                strcat(aux, repositorio);
-                strcat(aux, "/");   
-                system(aux);
-            } 
-        }
-        closedir(d);
-    }
-    d = opendir(direccion2);
-    if(d){
-        while ((dir = readdir(d)) != NULL){
-            if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..")){
-                if(buscarArchivos(merged, counter, dir->d_name)){
-                    strcpy(aux1, direccion);
-                    strcat(aux1, dir->d_name);
-                    strcpy(aux2, direccion2);
-                    strcat(aux2, dir->d_name);
-                    fp = fopen(aux1, "rt");
-                    fp2 = fopen(aux2, "rt");    
-                    fseek(fp, 0L, SEEK_END);
-                    fseek(fp2, 0L, SEEK_END);
-                    if(ftell(fp2) >= ftell(fp)){
-                        strcpy(aux, "cp ");
-                        strcat(aux, direccion2);
-                        strcat(aux, dir->d_name);
-                        strcat(aux, " ");
-                        strcat(aux, repositorio);
-                        strcat(aux, "/");   
-                        system(aux);
-                    }
-                    fclose(fp);
-                    fclose(fp2);
-                }
-            } 
-        }
-        closedir(d);
-    }
-    
-}
-
+/* * Funcion que busca archivos.
+   * @param char* array[]. Arreglo de cadenas de texto en las que se va a buscar el nombre de un archivo
+   * @param int counter. Cuenta las iteraciones del numero de elementos del array de cadenas.
+   * @param Commit commit. Estructura del commit donde se guarda la informacion relacionada al commit hecho.
+*/
 int buscarArchivos(char* array[], int counter, char buscado[]){
     int flag = 0;
     for(int i = 0; i < counter; i++)
@@ -629,6 +493,11 @@ int buscarArchivos(char* array[], int counter, char buscado[]){
     return flag;
 }
 
+/* * Estado en el que se ven los repositorios creados en el sistema.
+   * @param int id. Id del commit realizado.
+   * @param char* repositorio. Nombre del repositorio donde se realiza el commit.
+   * @param Commit commit. Estructura del commit donde se guarda la informacion relacionada al commit hecho.
+*/
 void ver_repositorios(State* state){
     *state = MENU;
     FILE* fp = fopen("app/repositorios.dat", "rt");
@@ -642,7 +511,7 @@ void ver_repositorios(State* state){
         strcat(auxiliar, "/usuarios.dat");
         fa = fopen(auxiliar, "rb"); 
         fread(&usuarios, sizeof(User), 1, fa);
-        printf("\t-> %s: %s\n", renglon, usuarios.user);
+        printf("\t-> %s\n", renglon);
         fclose(fa);
     }
     fclose(fp);
@@ -651,6 +520,10 @@ void ver_repositorios(State* state){
     getchar();
 }
 
+
+/* * Estado que crea una rama dentro de un repositorio.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void crear_rama(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -699,17 +572,16 @@ void crear_rama(State* state){
                 strcat(comando, "/");
                 strcat(comando, branch);
                 system(comando);
-                //puts(dir->d_name);
-                //printf("%ld\n", dir->d_ino);
             }
         }
-    }
-
-    
+    } 
     puts("Presiona enter para continuar...");
     getchar();
 }
 
+/* * Estado que revierte un branch a un estado anterior.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void revert(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -766,6 +638,10 @@ void revert(State* state){
     getchar();
 }
 
+
+/* * Estado que hace merge a el branch master desde cualquier branch.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void push(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -805,8 +681,6 @@ void push(State* state){
                 strcat(comando, " ");
                 strcat(comando, directorio2);
                 system(comando);
-                //puts(dir->d_name);
-                //printf("%ld\n", dir->d_ino);
             }
         }
 
@@ -818,6 +692,10 @@ void push(State* state){
     getchar();
 }
 
+
+/* * Estado que hace un pull request a un branch de un repositorio.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void pull(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -857,6 +735,9 @@ void pull(State* state){
     getchar();
 }
 
+/* * Estado que muestra en pantalla los pull requests hechos a un branch.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void ver_pulls(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -897,6 +778,9 @@ void ver_pulls(State* state){
     getchar();
 }
 
+/* * Estado que crea una rama dentro de un repositorio.
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void actualizar(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
@@ -944,6 +828,9 @@ void actualizar(State* state){
     getchar();
 }
 
+/* * Estado que crea un user y loa agrega como colaborador a uno de los repositorios
+   * @param State* state. Variable de control del estado actual y el estado siguiente.
+*/
 void crear_user(State* state){
     *state = MENU;
     FILE* fp = fopen("app/users.dat", "at");
