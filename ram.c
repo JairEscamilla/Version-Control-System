@@ -307,6 +307,13 @@ int loggerCommit(char* descripcion, char* repositorio, char branch[]){
     make_commit(temp, descripcion, repositorio, branch);
 }
 
+
+/* * Funcion en la que creamos una estructura para cada commit realizado.
+   * @param User temp. Estructura del usuario que creo el commit.
+   * @param char* descripcion. Descripcion del commit realizado.
+   * @param char* repositorio. Nombre del repositorio donde se realiza el commit.
+   * @param char branch[]. Nombre de la rama donde se hace el comit.
+*/
 void make_commit(User temp, char* descripcion, char* repositorio, char branch[]){
     FILE* fp;
     char sentencia[100], linea[100];
@@ -333,6 +340,12 @@ void make_commit(User temp, char* descripcion, char* repositorio, char branch[])
     mover_archivos(commit.id, repositorio, commit);
 }
 
+
+/* * Funcion que mueve los archivos de cada commit.
+   * @param int id. Id del commit realizado.
+   * @param char* repositorio. Nombre del repositorio donde se realiza el commit.
+   * @param Commit commit. Estructura del commit donde se guarda la informacion relacionada al commit hecho.
+*/
 void mover_archivos(int id, char* repositorio, Commit commit){
     FILE* fp;
     char idx[10], directorioCommit[200], comando[800], direccion[200], ids[200];
