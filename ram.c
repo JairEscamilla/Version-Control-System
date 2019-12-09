@@ -21,7 +21,8 @@ int main(void){
         {VER_COMMITS, ver_commits},
         {VER_REPOSITORIOS, ver_repositorios},
         {REVERT, revert},
-        {PUSH, push}
+        {PUSH, push},
+        {PULL_REQUEST, pull}
     };
 
     // Bucle infinito para la maquina de estados
@@ -70,7 +71,7 @@ void menu(State *state){
     puts("\t5.- Listar repositorios.");
     puts("\t6.- Revert.");
     puts("\t7.- Push (Merge a master).");
-    puts("\t8.- Agregar colaboradores a un repositorio.");
+    puts("\t8.- Pull Request.");
     puts("\t9.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
@@ -97,7 +98,8 @@ void menu(State *state){
             *state = PUSH;
             break;
         case 8: 
-            *state = EXIT;
+            *state = PULL_REQUEST;
+            break;
         default:
             *state = MENU;
             break;
@@ -755,7 +757,7 @@ void push(State* state){
     d = opendir(directorio);
     if(d){
         while ((dir = readdir(d)) != NULL){
-            if(dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+            if(strcmp(dir->d_name, "pull_request.dat") != 0, dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
                 strcpy(comando, "cp ");
                 strcat(comando, repo);
                 strcat(comando, "/");
@@ -774,6 +776,45 @@ void push(State* state){
     }else{
          puts("Esta branch no existe o no contiene el id ingresado):");
     }
+    puts("Presiona enter para continuar...");
+    getchar();
+}
+
+void pull(State* state){
+    *state = MENU;
+    int flag = 0, flag2 = 0;
+    DIR *d;
+    struct dirent *dir;
+    FILE* fp;
+    char repo[200], comando[600], branch[200], directorio[200], id[10], cambios[200];
+    printf("Ingresar nombre del repositorio al que desea hacer un pull request: ");
+    __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return; 
+    }
+    printf("Ingresar nombre de la rama que desea hacer pull request: ");
+    gets(branch);
+    strcpy(directorio, repo);
+    strcat(directorio, "/");
+    strcat(directorio, branch);
+    d = opendir(directorio);
+    if(d){
+        strcat(directorio, "/");
+        strcat(directorio, "pull_request.dat");
+        printf("Ingresar el cambio propuesto a esta branch-> ");
+        gets(cambios);
+        fp = fopen(directorio, "at");
+        fprintf(fp, "%s\n", cambios);
+        fclose(fp);
+        puts("Se ha hecho el pull request con exito");
+    }else 
+        puts("No existe esta rama");
+
     puts("Presiona enter para continuar...");
     getchar();
 }

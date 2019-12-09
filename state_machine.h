@@ -26,6 +26,7 @@ typedef enum stateType{
     VER_REPOSITORIOS,
     REVERT, 
     PUSH,
+    PULL_REQUEST,
     AGREGAR_USUARIOS,
     EXIT,
     STATE_NUM
@@ -63,6 +64,7 @@ void ver_repositorios(State* state);
 void crear_rama(State* state);
 void revert(State* state);
 void push(State* state);
+void pull(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio, char branch[]);
