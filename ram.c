@@ -615,7 +615,9 @@ void crear_rama(State* state){
     *state = MENU;
     int flag = 0, flag2 = 0;
     FILE* fp;
-    char repo[200], comando[200], branch[200];
+    DIR *d;
+    struct dirent *dir;
+    char repo[200], comando[200], branch[200], directorio[600];
     printf("Ingresar nombre del repositorio al que desea crear una rama: ");
     __fpurge(stdin);
     gets(repo);
@@ -626,6 +628,7 @@ void crear_rama(State* state){
         getchar();
         return;
     }
+
     printf("Ingresar nombre de la rama: ");
     gets(branch);
     strcpy(comando, "mkdir ");
@@ -641,6 +644,28 @@ void crear_rama(State* state){
         fclose(fp);
         puts("Se ha creado con exito la rama!");
     }
+    strcpy(directorio, repo);
+    strcat(directorio, "/master");
+    d = opendir(directorio);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+                strcpy(comando, "cp ");
+                strcat(comando, repo);
+                strcat(comando, "/master/");
+                strcat(comando, dir->d_name);
+                strcat(comando, " ");
+                strcat(comando, repo);
+                strcat(comando, "/");
+                strcat(comando, branch);
+                system(comando);
+                //puts(dir->d_name);
+                //printf("%ld\n", dir->d_ino);
+            }
+        }
+    }
+
+    
     puts("Presiona enter para continuar...");
     getchar();
 }
