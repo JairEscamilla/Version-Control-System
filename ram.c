@@ -272,7 +272,6 @@ void commit(State *state){
     fgets(descripcion, sizeof(descripcion), stdin);
     descripcion[strlen(descripcion) - 1] = '\0';
     loggerCommit(descripcion, repositorio, branch);
-    puts("Commit realizado con exito!");
     puts("Presiona enter para continuar... ");
     getchar();
 }
@@ -378,6 +377,7 @@ void mover_archivos(int id, char* repositorio, Commit commit){
         }
         closedir(d);
     }
+    puts("Commit realizado con exito!");
 }
 
 void cambiar_rama(State* state){
