@@ -19,8 +19,6 @@ int main(void){
         {CREAR_RAMA, crear_rama},
         {COMMIT, commit},
         {VER_COMMITS, ver_commits},
-        {CAMBIAR_DE_RAMA, cambiar_rama},
-        {MERGE, merge},
         {VER_REPOSITORIOS, ver_repositorios}
     };
 
@@ -67,9 +65,9 @@ void menu(State *state){
     puts("\t2.- Crear rama.");
     puts("\t3.- Hacer commit sobre un repositorio.");
     puts("\t4.- Ver commits de un repositorio.");
-    puts("\t5.- Cambiar de rama un repositorio.");
+    puts("\t5.- Listar repositorios.");
     puts("\t6.- Combinar ramas de un repositorio.");
-    puts("\t7.- Listar repositorios.");
+    puts("\t7.- Cambiar de rama un repositorio.");
     puts("\t8.- Agregar colaboradores a un repositorio.");
     puts("\t9.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
@@ -88,7 +86,7 @@ void menu(State *state){
             *state = VER_COMMITS;
             break;
         case 5:
-            *state = MERGE;
+            *state = VER_REPOSITORIOS;
             break;
         case 6: 
             *state = VER_REPOSITORIOS;
@@ -644,3 +642,4 @@ void crear_rama(State* state){
     puts("Presiona enter para continuar...");
     getchar();
 }
+

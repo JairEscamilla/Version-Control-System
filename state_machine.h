@@ -23,9 +23,9 @@ typedef enum stateType{
     CREAR_RAMA,
     COMMIT,
     VER_COMMITS,
+    VER_REPOSITORIOS,
     CAMBIAR_DE_RAMA, 
     MERGE,
-    VER_REPOSITORIOS,
     AGREGAR_USUARIOS,
     EXIT,
     STATE_NUM
