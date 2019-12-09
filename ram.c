@@ -23,7 +23,8 @@ int main(void){
         {REVERT, revert},
         {PUSH, push},
         {PULL_REQUEST, pull},
-        {VER_PULLS, ver_pulls}
+        {VER_PULLS, ver_pulls},
+        {ACTUALIZAR_FILES, actualizar}
     };
 
     // Bucle infinito para la maquina de estados
@@ -73,7 +74,8 @@ void menu(State *state){
     puts("\t6.- Revert.");
     puts("\t7.- Push (Merge a master).");
     puts("\t8.- Pull Request.");
-    puts("\t9.- Ver pull requests.\n");
+    puts("\t9.- Ver pull requests.");
+    puts("\t10.- Actualizar rama.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
     switch (opcion){
@@ -103,6 +105,9 @@ void menu(State *state){
             break;
         case 9:
             *state = VER_PULLS;
+            break;
+        case 10:
+            *state = ACTUALIZAR_FILES;
             break;
         default:
             *state = MENU;
@@ -859,6 +864,55 @@ void ver_pulls(State* state){
     }else 
         puts("No existe esta rama");
 
+    puts("Presiona enter para continuar...");
+    getchar();
+}
+
+void actualizar(State* state){
+    *state = MENU;
+    int flag = 0, flag2 = 0;
+    DIR *d;
+    struct dirent *dir;
+    FILE* fp;
+    char repo[200], comando[600], branch[200], directorio[200], id[10], directorio2[200];
+    printf("Ingresar nombre del repositorio donde se encuentra el branch que quiere actualizar: ");
+    __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return;
+    }
+    printf("Ingresar nombre de la rama que desea actualizar: ");
+    gets(branch);
+
+    strcpy(directorio, repo);
+    strcat(directorio, "/master/");
+    d = opendir(directorio);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(strcmp(dir->d_name, "pull_request.dat") != 0, dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+                strcpy(comando, "cp ");
+                strcat(comando, repo);
+                strcat(comando, "/master/");
+                strcat(comando, dir->d_name);
+                strcat(comando, " ");
+                strcat(comando, repo);
+                strcat(comando, "/");
+                strcat(comando, branch);
+                strcat(comando, "/");
+                system(comando);
+                //puts(dir->d_name);
+                //printf("%ld\n", dir->d_ino);
+            }
+        }
+
+        puts("Se ha actualizado el branch con exito!");
+    }else{
+         puts("Esta branch no existe o no contiene el id ingresado):");
+    }
     puts("Presiona enter para continuar...");
     getchar();
 }
