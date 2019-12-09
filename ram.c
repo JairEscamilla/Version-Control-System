@@ -18,8 +18,8 @@ int main(void){
         {CREAR_REPOSITORIO, crear_repositorio},
         {CREAR_RAMA, crear_rama},
         {COMMIT, commit},
-        {CAMBIAR_DE_RAMA, cambiar_rama},
         {VER_COMMITS, ver_commits},
+        {CAMBIAR_DE_RAMA, cambiar_rama},
         {MERGE, merge},
         {VER_REPOSITORIOS, ver_repositorios}
     };
@@ -66,8 +66,8 @@ void menu(State *state){
     puts("\t1.- Crear repositorio.");
     puts("\t2.- Crear rama.");
     puts("\t3.- Hacer commit sobre un repositorio.");
-    puts("\t4.- Cambiar de rama un repositorio.");
-    puts("\t5.- Ver commits de un repositorio.");
+    puts("\t4.- Ver commits de un repositorio.");
+    puts("\t5.- Cambiar de rama un repositorio.");
     puts("\t6.- Combinar ramas de un repositorio.");
     puts("\t7.- Listar repositorios.");
     puts("\t8.- Agregar colaboradores a un repositorio.");
