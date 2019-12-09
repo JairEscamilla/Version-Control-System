@@ -24,7 +24,7 @@ typedef enum stateType{
     COMMIT,
     VER_COMMITS,
     VER_REPOSITORIOS,
-    CAMBIAR_DE_RAMA, 
+    REVERT, 
     MERGE,
     AGREGAR_USUARIOS,
     EXIT,
@@ -61,6 +61,7 @@ void ver_commits(State* state);
 void merge(State* state);
 void ver_repositorios(State* state);
 void crear_rama(State* state);
+void revert(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio, char branch[]);

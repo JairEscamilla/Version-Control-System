@@ -19,7 +19,8 @@ int main(void){
         {CREAR_RAMA, crear_rama},
         {COMMIT, commit},
         {VER_COMMITS, ver_commits},
-        {VER_REPOSITORIOS, ver_repositorios}
+        {VER_REPOSITORIOS, ver_repositorios},
+        {REVERT, revert}
     };
 
     // Bucle infinito para la maquina de estados
@@ -66,7 +67,7 @@ void menu(State *state){
     puts("\t3.- Hacer commit sobre un repositorio.");
     puts("\t4.- Ver commits de un repositorio.");
     puts("\t5.- Listar repositorios.");
-    puts("\t6.- Combinar ramas de un repositorio.");
+    puts("\t6.- Revert.");
     puts("\t7.- Cambiar de rama un repositorio.");
     puts("\t8.- Agregar colaboradores a un repositorio.");
     puts("\t9.- Salir.\n");
@@ -89,7 +90,7 @@ void menu(State *state){
             *state = VER_REPOSITORIOS;
             break;
         case 6: 
-            *state = VER_REPOSITORIOS;
+            *state = REVERT;
             break;
         case 7: 
             *state = AGREGAR_USUARIOS;
@@ -643,3 +644,55 @@ void crear_rama(State* state){
     getchar();
 }
 
+void revert(State* state){
+    *state = MENU;
+    int flag = 0, flag2 = 0;
+    DIR *d;
+    struct dirent *dir;
+    FILE* fp;
+    char repo[200], comando[600], branch[200], directorio[200], id[10], directorio2[200];
+    printf("Ingresar nombre del repositorio al que desea hacer un revert: ");
+    __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return;
+    }
+    printf("Ingresar nombre de la rama que desea revertir: ");
+    gets(branch);
+    printf("Ingresar id de commit al que desea revertir: ");
+    gets(id);
+    strcpy(directorio, repo);
+    strcat(directorio, "/");
+    strcat(directorio, branch);
+    strcat(directorio, "/");
+    strcpy(directorio2, directorio);
+    strcat(directorio, id);
+    
+    d = opendir(directorio);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+                strcpy(comando, "cp ");
+                strcat(comando, repo);
+                strcat(comando, "/");
+                strcat(comando, branch);
+                strcat(comando, "/");
+                strcat(comando, id);
+                strcat(comando, "/");
+                strcat(comando, dir->d_name);
+                strcat(comando, " ");
+                strcat(comando, directorio2);
+                system(comando);
+            }
+        }
+    }else{
+        puts("Esta branch no existe o no contiene el id ingresado):");
+    }
+    puts("Se ha realizado el revert con exito!");
+    puts("Presiona enter para continuar...");
+    getchar();
+}
