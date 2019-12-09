@@ -20,7 +20,8 @@ int main(void){
         {COMMIT, commit},
         {VER_COMMITS, ver_commits},
         {VER_REPOSITORIOS, ver_repositorios},
-        {REVERT, revert}
+        {REVERT, revert},
+        {PUSH, push}
     };
 
     // Bucle infinito para la maquina de estados
@@ -68,7 +69,7 @@ void menu(State *state){
     puts("\t4.- Ver commits de un repositorio.");
     puts("\t5.- Listar repositorios.");
     puts("\t6.- Revert.");
-    puts("\t7.- Cambiar de rama un repositorio.");
+    puts("\t7.- Push (Merge a master).");
     puts("\t8.- Agregar colaboradores a un repositorio.");
     puts("\t9.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
@@ -93,7 +94,7 @@ void menu(State *state){
             *state = REVERT;
             break;
         case 7: 
-            *state = AGREGAR_USUARIOS;
+            *state = PUSH;
             break;
         case 8: 
             *state = EXIT;
@@ -687,12 +688,67 @@ void revert(State* state){
                 strcat(comando, " ");
                 strcat(comando, directorio2);
                 system(comando);
+                //puts(dir->d_name);
+                //printf("%ld\n", dir->d_ino);
             }
         }
+
+        puts("Se ha realizado el revert con exito!");
     }else{
         puts("Esta branch no existe o no contiene el id ingresado):");
     }
-    puts("Se ha realizado el revert con exito!");
+    puts("Presiona enter para continuar...");
+    getchar();
+}
+
+void push(State* state){
+    *state = MENU;
+    int flag = 0, flag2 = 0;
+    DIR *d;
+    struct dirent *dir;
+    FILE* fp;
+    char repo[200], comando[600], branch[200], directorio[200], id[10], directorio2[200];
+    printf("Ingresar nombre del repositorio al que desea hacer un push: ");
+    __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return;
+    }
+    printf("Ingresar nombre de la rama que desea hacer merge a master: ");
+    gets(branch);
+
+    strcpy(directorio, repo);
+    strcat(directorio, "/");
+    strcat(directorio, branch);
+    strcat(directorio, "/");
+    strcpy(directorio2, repo);
+    strcat(directorio2, "/master");
+    d = opendir(directorio);
+    if(d){
+        while ((dir = readdir(d)) != NULL){
+            if(dir->d_type != 4 && strcmp(dir->d_name, "usuarios.dat") != 0 && strcmp(dir->d_name, "pruebas") != 0 && strcmp(dir->d_name, "..") != 0 && strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "commits.dat") != 0 && strcmp(dir->d_name, "branches.dat") != 0 && strcmp(dir->d_name, "master") != 0){
+                strcpy(comando, "cp ");
+                strcat(comando, repo);
+                strcat(comando, "/");
+                strcat(comando, branch);
+                strcat(comando, "/");
+                strcat(comando, dir->d_name);
+                strcat(comando, " ");
+                strcat(comando, directorio2);
+                system(comando);
+                //puts(dir->d_name);
+                //printf("%ld\n", dir->d_ino);
+            }
+        }
+
+        puts("Se ha realizado el el merge con exito!");
+    }else{
+         puts("Esta branch no existe o no contiene el id ingresado):");
+    }
     puts("Presiona enter para continuar...");
     getchar();
 }
