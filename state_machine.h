@@ -29,6 +29,7 @@ typedef enum stateType{
     PULL_REQUEST,
     VER_PULLS,
     ACTUALIZAR_FILES,
+    CREAR_USER,
     AGREGAR_USUARIOS,
     EXIT,
     STATE_NUM
@@ -69,6 +70,7 @@ void push(State* state);
 void pull(State* state);
 void ver_pulls(State* state);
 void actualizar(State* state);
+void crear_user(State* state);
 
 User logger(int* flag);
 int loggerCommit(char* descripcion, char* repositorio, char branch[]);

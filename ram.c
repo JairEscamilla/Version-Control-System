@@ -24,7 +24,8 @@ int main(void){
         {PUSH, push},
         {PULL_REQUEST, pull},
         {VER_PULLS, ver_pulls},
-        {ACTUALIZAR_FILES, actualizar}
+        {ACTUALIZAR_FILES, actualizar},
+        {CREAR_USER, crear_user}
     };
 
     // Bucle infinito para la maquina de estados
@@ -75,7 +76,8 @@ void menu(State *state){
     puts("\t7.- Push (Merge a master).");
     puts("\t8.- Pull Request.");
     puts("\t9.- Ver pull requests.");
-    puts("\t10.- Actualizar rama.\n");
+    puts("\t10.- Actualizar rama.");
+    puts("\t11.- Crear usuario.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
     switch (opcion){
@@ -108,6 +110,9 @@ void menu(State *state){
             break;
         case 10:
             *state = ACTUALIZAR_FILES;
+            break;
+        case 11:
+            *state = CREAR_USER;
             break;
         default:
             *state = MENU;
@@ -913,6 +918,23 @@ void actualizar(State* state){
     }else{
          puts("Esta branch no existe o no contiene el id ingresado):");
     }
+    puts("Presiona enter para continuar...");
+    getchar();
+}
+
+void crear_user(State* state){
+    *state = MENU;
+    FILE* fp = fopen("app/users.dat", "at");
+    char user[100], pwd[200];
+    printf("Ingresar usuario-> ");
+    __fpurge(stdin);
+    gets(user);
+    printf("Ingresar password-> ");
+    gets(pwd);
+    fprintf(fp, "%s\n", user);
+    fprintf(fp, "%s\n", pwd);
+    fclose(fp);
+    puts("Se ha creado con exito el nuevo user!");
     puts("Presiona enter para continuar...");
     getchar();
 }
