@@ -30,7 +30,6 @@ typedef enum stateType{
     VER_PULLS,
     ACTUALIZAR_FILES,
     CREAR_USER,
-    AGREGAR_USUARIOS,
     EXIT,
     STATE_NUM
 }State;

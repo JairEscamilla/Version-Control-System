@@ -25,7 +25,8 @@ int main(void){
         {PULL_REQUEST, pull},
         {VER_PULLS, ver_pulls},
         {ACTUALIZAR_FILES, actualizar},
-        {CREAR_USER, crear_user}
+        {CREAR_USER, crear_user},
+        {EXIT, salir}
     };
 
     // Bucle infinito para la maquina de estados
@@ -77,7 +78,8 @@ void menu(State *state){
     puts("\t8.- Pull Request.");
     puts("\t9.- Ver pull requests.");
     puts("\t10.- Actualizar rama.");
-    puts("\t11.- Crear usuario.\n");
+    puts("\t11.- Crear usuario.");
+    puts("\t12.- Salir.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
     switch (opcion){
@@ -113,6 +115,9 @@ void menu(State *state){
             break;
         case 11:
             *state = CREAR_USER;
+            break;
+        case 12:
+            *state = EXIT;
             break;
         default:
             *state = MENU;
@@ -184,7 +189,6 @@ void crear_repositorio(State *state){
 */
 void salir(State *state){
     puts("Saliendo del sistema... ");
-    system("sleep 5");
     exit(0);
 }
 
