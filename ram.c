@@ -324,7 +324,6 @@ void mover_archivos(int id, char* repositorio, Commit commit){
     strcat(directorioCommit, "/");
     strcat(directorioCommit, idx);
     system(directorioCommit);
-    puts(directorioCommit);
     struct dirent *dir;
     strcpy(direccion, repositorio);
     strcat(direccion, "/");
@@ -338,6 +337,8 @@ void mover_archivos(int id, char* repositorio, Commit commit){
                 strcpy(comando, "cp ");
                 strcat(comando, repositorio);
                 strcat(comando, "/");
+                strcat(comando, commit.branch);
+                strcat(comando, "/");
                 strcat(comando, dir->d_name);
                 strcat(comando, " ");
                 strcat(comando, repositorio);
@@ -345,7 +346,7 @@ void mover_archivos(int id, char* repositorio, Commit commit){
                 strcat(comando, commit.branch);
                 strcat(comando, "/");
                 strcat(comando, idx);
-                //system(comando);
+                system(comando);
             }
         }
         closedir(d);
