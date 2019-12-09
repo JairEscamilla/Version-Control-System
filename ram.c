@@ -22,7 +22,8 @@ int main(void){
         {VER_REPOSITORIOS, ver_repositorios},
         {REVERT, revert},
         {PUSH, push},
-        {PULL_REQUEST, pull}
+        {PULL_REQUEST, pull},
+        {VER_PULLS, ver_pulls}
     };
 
     // Bucle infinito para la maquina de estados
@@ -72,7 +73,7 @@ void menu(State *state){
     puts("\t6.- Revert.");
     puts("\t7.- Push (Merge a master).");
     puts("\t8.- Pull Request.");
-    puts("\t9.- Salir.\n");
+    puts("\t9.- Ver pull requests.\n");
     printf("\nSeleccione la opcion que desee realizar-> ");
     scanf("%d", &opcion);
     switch (opcion){
@@ -99,6 +100,9 @@ void menu(State *state){
             break;
         case 8: 
             *state = PULL_REQUEST;
+            break;
+        case 9:
+            *state = VER_PULLS;
             break;
         default:
             *state = MENU;
@@ -812,6 +816,46 @@ void pull(State* state){
         fprintf(fp, "%s\n", cambios);
         fclose(fp);
         puts("Se ha hecho el pull request con exito");
+    }else 
+        puts("No existe esta rama");
+
+    puts("Presiona enter para continuar...");
+    getchar();
+}
+
+void ver_pulls(State* state){
+    *state = MENU;
+    int flag = 0, flag2 = 0;
+    DIR *d;
+    struct dirent *dir;
+    FILE* fp;
+    char repo[200], comando[600], branch[200], directorio[200], id[10], cambios[200];
+    printf("Ingresar nombre del repositorio del que desea ver los pull request: ");
+    __fpurge(stdin);
+    gets(repo);
+    flag = buscar_repositorios(repo);
+    if(flag == 0){
+        puts("Este repositorio no existe):");
+        puts("Presiona enter para continuar...");
+        getchar();
+        return; 
+    }
+    printf("Ingresar nombre de la rama que desea ver pull request: ");
+    gets(branch);
+    strcpy(directorio, repo);
+    strcat(directorio, "/");
+    strcat(directorio, branch);
+    d = opendir(directorio);
+    if(d){
+        strcat(directorio, "/");
+        strcat(directorio, "pull_request.dat");
+        fp = fopen(directorio, "rt");
+        while(fgets(cambios, 200, fp) != NULL){
+            cambios[strlen(cambios) - 1 ] = '\0';
+            printf("\t%d:\n\t\t", flag++);
+            puts(cambios);
+        }
+        fclose(fp);
     }else 
         puts("No existe esta rama");
 
