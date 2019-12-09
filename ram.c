@@ -133,7 +133,7 @@ void crear_repositorio(State *state){
     FILE* fp;
     int flag = 0, flag2 = 0;
     User login;
-    char repositorio[200], sentencia[200], renglon[200];
+    char repositorio[200], sentencia[200], renglon[200], readme[200];
     strcpy(sentencia, "mkdir ");
     printf("Ingresar nombre del repositorio-> ");
     __fpurge(stdin);
@@ -177,6 +177,13 @@ void crear_repositorio(State *state){
         strcat(sentencia, "/ids.dat");
         fp = fopen(sentencia, "wt");
         fprintf(fp, "0\n");
+        fclose(fp);
+        strcpy(sentencia, repositorio);
+        strcat(sentencia, "/master/readme.txt");
+        printf("Ingresar contenido de readme-> ");
+        gets(readme);
+        fp = fopen(sentencia, "wt");
+        fprintf(fp, "%s\n", readme);
         fclose(fp);
         puts("Se ha creado con exito el repositorio!\n");
     }     
